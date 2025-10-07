@@ -34,6 +34,47 @@ def develop_to_main() -> None:
         except Exception as e:
             print(f"Failed to create merge request for {component['name']}: {e}")
 
+def main_to_develop() -> None:
+    """Switch all specified GitLab repositories from 'main' branch to 'develop' branch."""
+
+    components = get_setting("gitlab.components")
+    components = components if components else []
+    gl = setup_gitlab()
+    for component in components:
+        try:
+            print(f"Processing component: {component['name']}")
+            project = gl.projects.get(component["project_name_with_namespace"])
+
+            merge_request = project.mergerequests.create(
+                {
+                    "source_branch": "main",
+                    "target_branch": "develop",
+                    "title": "Main to Develop",
+                }
+            )
+            print(f"Merge request created: {merge_request.web_url}")
+        except Exception as e:
+            print(f"Failed to create merge request for {component['name']}: {e}")
+
+def remove_merged_branches() -> None:
+    """Remove all merged branches in specified GitLab repositories."""
+    gl = setup_gitlab()
+    approval_group_id = get_setting("gitlab.approval_group_id")
+    group = gl.groups.get(approval_group_id)
+
+    projects = group.projects.list(include_subgroups=True, all=True)
+    for project in projects:
+        click.echo(f"Found project: {project.name}, scanning for merged branches...")
+        proj = gl.projects.get(project.id)
+        branches = proj.branches.list(all=True)
+
+        for branch in branches:
+            if branch.name not in ["main", "develop", "master"] and branch.merged:
+                click.echo(f"Removing merged branch: {branch.name}")
+                try:
+                    proj.branches.delete(branch.name)
+                except Exception as e:
+                    click.echo(f"Failed to remove branch {branch.name}: {e}")
 
 def fetch_approved_merge_requests(yolo: bool = False) -> None:
     """Fetch all approved merge requests from specified GitLab repositories."""
