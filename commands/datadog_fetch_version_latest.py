@@ -1,6 +1,6 @@
 import click
 from lizzy.cli import BaseCommand
-from lizzy.datadog import get_fetch_versions
+from lizzy.datadog import get_highest_version
 
 
 class DatadogVersionLatestCommand(BaseCommand):
@@ -11,5 +11,4 @@ class DatadogVersionLatestCommand(BaseCommand):
         def fetch_datadog_version_latest():
             """Fetch Datadog latest version."""
             click.echo("Fetching Datadog latest version...")
-            versions = get_fetch_versions()
-            click.echo(f"Latest Datadog Agent: {max(versions, key=lambda v: list(map(int, v.split('.'))))}")
+            click.echo(f"Latest Datadog Agent: {get_highest_version()}")

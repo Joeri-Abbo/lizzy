@@ -18,7 +18,7 @@ setup(
     },
     author="Joeri Abbo",
     author_email="jabbo@schubergphilis.com",
-    description="A CLI tool with subcommands including update and hello world.",
+    description="Lazzy jabbo cli, this tool is written for a lizard user :lizard smash:",
     url="https://gitlab.com/your-username/lizzy-cli",
     project_urls={
         "Source": "https://gitlab/Users/jabbo/Documents/wsus/patch.sh.com/your-username/lizzy-cli",

@@ -9,5 +9,6 @@ class GitlabDevelopToMainCommand(BaseCommand):
     def register(command_group):
         @command_group.command()
         def gitlab_develop_to_main():
+            """Create merge requests to switch from develop to main branch."""
             develop_to_main()
             click.echo("Switched GitLab branches from develop to main.")

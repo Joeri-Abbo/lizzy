@@ -10,5 +10,6 @@ class GitlabMergeApprovedCommand(BaseCommand):
     def register(command_group):
         @command_group.command()
         def gitlab_merge_approved():
+            """Merge all approved merge requests from my user."""
             fetch_approved_merge_requests()
             click.echo("Merged approved pull requests from GitLab.")

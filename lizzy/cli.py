@@ -39,7 +39,7 @@ class BaseCommand:
 @click.group()
 @click.pass_context
 def lizzy(ctx):
-    """Lizzy CLI - A tool to manage Lizzy configurations and Datadog versions."""
+    """Lizzy CLI - A tool to manage configurations and automations."""
     click.echo(ASCII_ART)
     if ctx.invoked_subcommand is None:
         click.echo(ctx.get_help())

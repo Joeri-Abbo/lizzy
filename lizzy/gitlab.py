@@ -3,16 +3,21 @@ from lizzy.config import get_setting
 import click
 
 
+def setup_gitlab() -> gitlab.Gitlab:
+    """Set up and return a GitLab connection using the API token from the config."""
+    api_token = get_setting("gitlab.api_token")
+    if not api_token:
+        raise ValueError("GitLab API token is not set in the configuration.")
+    gl = gitlab.Gitlab("https://gitlab.com", private_token=api_token)
+    return gl
+
+
 def develop_to_main() -> None:
     """Switch all specified GitLab repositories from 'develop' branch to 'main' branch."""
 
-    api_token = get_setting("gitlab.api_token")
     components = get_setting("gitlab.components")
-    if not api_token:
-        raise ValueError("GitLab API token is not set in the configuration.")
-
     components = components if components else []
-    gl = gitlab.Gitlab("https://gitlab.com", private_token=api_token)
+    gl = setup_gitlab()
     for component in components:
         try:
             print(f"Processing component: {component['name']}")
@@ -33,18 +38,12 @@ def develop_to_main() -> None:
 def fetch_approved_merge_requests(yolo: bool = False) -> None:
     """Fetch all approved merge requests from specified GitLab repositories."""
 
-    api_token = get_setting("gitlab.api_token")
+    gl = setup_gitlab()
     approval_group_id = get_setting("gitlab.approval_group_id")
     username = get_setting("gitlab.username")
-    if not api_token:
-        raise ValueError("GitLab API token is not set in the configuration.")
-
-    gl = gitlab.Gitlab("https://gitlab.com", private_token=api_token)
     group = gl.groups.get(approval_group_id)
 
-    # Get all projects in the group and subgroups
     projects = group.projects.list(include_subgroups=True, all=True)
-    approved_merge_requests = []
     for project in projects:
         click.echo(f"Found project: {project.name}, scanning for approved MRs...")
         proj = gl.projects.get(project.id)
