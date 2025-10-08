@@ -1,6 +1,7 @@
+import click
+
 from lizzy.cli import BaseCommand
 from lizzy.gitlab import remove_merged_branches
-import click
 
 
 class GitlabRemoveMergedBranchesCommand(BaseCommand):

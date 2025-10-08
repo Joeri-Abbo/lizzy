@@ -1,6 +1,7 @@
 import click
+
 from lizzy.cli import BaseCommand
-from lizzy.datadog import get_fetch_versions, bump_datadog_components
+from lizzy.datadog import get_fetch_versions
 
 
 class DatadogBumpComponentsCommand(BaseCommand):

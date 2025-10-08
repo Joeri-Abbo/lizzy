@@ -1,6 +1,7 @@
+import click
+
 from lizzy.cli import BaseCommand
 from lizzy.gitlab import fetch_approved_merge_requests
-import click
 
 
 class GitlabMergeApprovedCommand(BaseCommand):

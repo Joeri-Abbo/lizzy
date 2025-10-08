@@ -1,6 +1,7 @@
-import gitlab
-from lizzy.config import get_setting
 import click
+import gitlab
+
+from lizzy.config import get_setting
 
 
 def setup_gitlab() -> gitlab.Gitlab:
@@ -34,6 +35,7 @@ def develop_to_main() -> None:
         except Exception as e:
             print(f"Failed to create merge request for {component['name']}: {e}")
 
+
 def main_to_develop() -> None:
     """Switch all specified GitLab repositories from 'main' branch to 'develop' branch."""
 
@@ -56,6 +58,7 @@ def main_to_develop() -> None:
         except Exception as e:
             print(f"Failed to create merge request for {component['name']}: {e}")
 
+
 def remove_merged_branches() -> None:
     """Remove all merged branches in specified GitLab repositories."""
     gl = setup_gitlab()
@@ -75,6 +78,7 @@ def remove_merged_branches() -> None:
                     proj.branches.delete(branch.name)
                 except Exception as e:
                     click.echo(f"Failed to remove branch {branch.name}: {e}")
+
 
 def fetch_approved_merge_requests(yolo: bool = False) -> None:
     """Fetch all approved merge requests from specified GitLab repositories."""

@@ -1,6 +1,8 @@
+import click
+
 from lizzy.cli import BaseCommand
 from lizzy.config import edit_config as edit_lizzy_config
-import click
+
 
 class EditConfigCommand(BaseCommand):
     """Command to create a config file if it does not exist, or open it in vim if it does."""
