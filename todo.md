@@ -1,4 +1,3 @@
-- [ ] Gimme aws creds based on AWS account auth method
 - [ ] Fargate restart of cluster based on AWS account
 - [ ] Terraform bulk discard runs
 - [ ] Terraform bulk plan
