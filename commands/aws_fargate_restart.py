@@ -4,15 +4,15 @@ from lizzy.aws import get_aws_accounts, get_aws_credentials
 from lizzy.cli import BaseCommand
 
 
-class AWSAuthenticateCommand(BaseCommand):
-    """Authenticate AWS CLI with the provided credentials."""
+class AWSFargateRestartCommand(BaseCommand):
+    """Restart an AWS Fargate task of a cluster."""
 
     @staticmethod
     def register(command_group):
         @command_group.command()
-        def aws_authenticate():
-            """Authenticate AWS CLI with the provided credentials."""
-            click.echo("Authenticating AWS CLI.")
+        def aws_fargate_restart():
+            """Restart an AWS Fargate task of a cluster."""
+            click.echo("Restarting AWS Fargate task.")
             accounts = get_aws_accounts()
             labels = ""
             for account in accounts:

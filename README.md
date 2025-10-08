@@ -162,23 +162,21 @@ pytest -v
 ### Linting
 
 ```bash
-# Check with flake8
-flake8 lizzy/ commands/ tests/
+# Check with ruff
+ruff check .
 
-# Format with black
-black lizzy/ commands/ tests/
+# Auto-fix issues
+ruff check . --fix
 
-# Lint with pylint
-pylint lizzy/ commands/
+# Format code
+ruff format .
 ```
 
 ### Code Quality
 
 This project uses:
 - **pytest** for testing
-- **black** for code formatting
-- **flake8** for linting
-- **pylint** for static analysis
+- **ruff** for linting and formatting (replaces black, flake8, pylint)
 - **mypy** for type checking (optional)
 - **pytest-cov** for coverage reporting
 
