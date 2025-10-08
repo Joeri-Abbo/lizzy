@@ -62,22 +62,27 @@ make test
 
 ### Code Style
 
-We use several tools to maintain code quality:
+We use Ruff for code quality and formatting:
 
-- **Black** for code formatting (line length: 88)
-- **Flake8** for linting
-- **Pylint** for static analysis
+- **Ruff** - Fast Python linter and formatter (replaces black, flake8, pylint, isort)
+- Line length: 88 characters
+- Python 3.9+ compatible
 
 Format your code:
 
 ```bash
 make format
+# or
+ruff check . --fix
+ruff format .
 ```
 
 Check linting:
 
 ```bash
 make lint
+# or
+ruff check .
 ```
 
 ### Writing Tests
