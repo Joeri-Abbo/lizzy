@@ -4,7 +4,7 @@ from lizzy.aws import get_aws_accounts, get_aws_credentials
 from lizzy.cli import BaseCommand
 
 
-class AWSAuthenticateWebhookCommand(BaseCommand):
+class AWSAuthenticateCommand(BaseCommand):
     """Authenticate AWS CLI with the provided credentials."""
 
     @staticmethod
