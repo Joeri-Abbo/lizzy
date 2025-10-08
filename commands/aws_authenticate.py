@@ -1,6 +1,7 @@
-from lizzy.cli import BaseCommand
-from lizzy.aws import get_aws_credentials, get_aws_accounts
 import click
+
+from lizzy.aws import get_aws_accounts, get_aws_credentials
+from lizzy.cli import BaseCommand
 
 
 class AWSAuthenticateWebhookCommand(BaseCommand):

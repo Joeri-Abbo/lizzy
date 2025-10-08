@@ -1,21 +1,24 @@
-import click
 import json
 import subprocess
 from pathlib import Path
-import json
-from pathlib import Path
+
+import click
 
 
-def config_dir() -> str:   
+def config_dir() -> str:
     """Return the path to the config directory."""
     return Path.home() / ".lizzy"
-def config_path() -> str:   
+
+
+def config_path() -> str:
     """Return the path to the config file."""
     return config_dir() / "config.json"
 
+
 def example_config_path() -> str:
     """Return the path to the example config file."""
-    return Path(__file__).parent / "example_config.json"    
+    return Path(__file__).parent / "example_config.json"
+
 
 def get_config():
     """Load the config file, or the example config if it does not exist."""
@@ -26,6 +29,7 @@ def get_config():
         with open(example_config_path()) as f:
             config = json.load(f)
     return config
+
 
 def edit_config():
     """Create or open the config file in ~/.lizzy/config.json using vim."""
@@ -43,13 +47,14 @@ def edit_config():
             "vim is not installed or not found in PATH. Please install vim or open the config file manually."
         )
 
+
 def get_setting(setting: str = None):
     """Get a specific setting from the config file."""
     split = setting.split(".") if setting else []
-    
+
     if not split:
         return None
-        
+
     config = get_config()
     for key in split:
         config = config.get(key)

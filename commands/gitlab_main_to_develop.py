@@ -1,6 +1,8 @@
-from lizzy.cli import BaseCommand
-from lizzy.gitlab import main_to_develop 
 import click
+
+from lizzy.cli import BaseCommand
+from lizzy.gitlab import main_to_develop
+
 
 class GitlabMainToDevelopCommand(BaseCommand):
     """Command to create a config file if it does not exist, or open it in vim if it does."""

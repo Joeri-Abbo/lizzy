@@ -1,10 +1,11 @@
-import click
+import json
 import re
 
+import click
 import requests
-from lizzy.gitlab import setup_gitlab
+
 from lizzy.config import get_setting
-import json
+from lizzy.gitlab import setup_gitlab
 
 
 def get_auth_token(registry: str, repository: str) -> str:

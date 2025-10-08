@@ -1,6 +1,7 @@
+import click
+
 from lizzy.cli import BaseCommand
 from lizzy.terraform import set_slack_webhook
-import click
 
 
 class TerraformSetSlackWebhookCommand(BaseCommand):

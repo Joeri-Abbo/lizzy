@@ -1,8 +1,7 @@
-from lizzy.config import get_setting
-import requests
-import os
-
 import click
+import requests
+
+from lizzy.config import get_setting
 
 
 def get_organization() -> str:

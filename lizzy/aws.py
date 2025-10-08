@@ -1,8 +1,7 @@
-from lizzy.config import get_setting
 import gimme_aws_creds.main
 import gimme_aws_creds.ui
-import boto3
-import click
+
+from lizzy.config import get_setting
 
 
 def get_aws_credentials(account_name: str) -> tuple:
@@ -10,8 +9,8 @@ def get_aws_credentials(account_name: str) -> tuple:
 
     account = get_account_by_name(account_name)
 
-    pattern = "|".join(sorted(set([account["id"]])))
-    pattern = "/:({}):/".format(pattern)
+    pattern = "|".join(sorted({account["id"]}))
+    pattern = f"/:({pattern}):/"
     ui = gimme_aws_creds.ui.CLIUserInterface(argv=["", "--roles", pattern])
     creds = gimme_aws_creds.main.GimmeAWSCreds(ui=ui)
     creds = creds.iter_selected_aws_credentials().__next__()

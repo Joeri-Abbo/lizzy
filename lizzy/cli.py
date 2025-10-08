@@ -1,9 +1,11 @@
-import click
 import importlib
-import pkgutil
 import inspect
-import commands
+import pkgutil
 import sys
+
+import click
+
+import commands
 
 ASCII_ART = """
 ⠀⠀⠀⠀⠀⢀⣠⣤⡀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
