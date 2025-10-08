@@ -13,11 +13,10 @@ def get_organization() -> str:
 def get_headers() -> dict:
     """Generate headers for Terraform API requests."""
     api_token = get_setting("terraform.api_token")
-    headers = {
+    return {
         "Authorization": f"Bearer {api_token}",
         "Content-Type": "application/vnd.api+json",
     }
-    return headers
 
 
 def get_request(url: str):
@@ -26,6 +25,7 @@ def get_request(url: str):
     response = requests.get(url, headers=headers)
     response.raise_for_status()
     return response
+
 
 def post_request(url: str, payload: dict):
     """Make a POST request to the specified URL with appropriate headers and payload."""
@@ -95,7 +95,6 @@ def create_slack_notification(workspace_id, webhook_url):
     return response.status_code == 201
 
 
-
 def set_slack_webhook() -> None:
     """Set the Slack webhook URL for Terraform."""
     slack_webhook_url = get_setting("terraform.slack_webhook_url")
@@ -113,7 +112,9 @@ def set_slack_webhook() -> None:
         if not slack_configured:
             result = create_slack_notification(workspace_id, slack_webhook_url)
             if result:
-                click.echo(f"Slack webhook added to workspace {workspace['attributes']['name']}")
+                click.echo(
+                    f"Slack webhook added to workspace {workspace['attributes']['name']}"
+                )
             else:
                 click.echo(
                     f"Failed to add Slack webhook to workspace {workspace['attributes']['name']}"

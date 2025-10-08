@@ -16,3 +16,5 @@
 - [ ] Add project to mirror repo jobje
 - [ ] Force restart Container X of env X
 - [ ] Change tag of container X for Dev / EXP
+- [ ] bulk edit
+- [ ] Ec2 restart based on AWS account
