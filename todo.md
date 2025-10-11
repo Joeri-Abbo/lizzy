@@ -1,14 +1,14 @@
 - [ ] Terraform bulk discard runs
 - [ ] Terraform bulk plan
 - [ ] Terraform validate all planned states
+
 - [ ] AWS patch all instances support of groot V2
 - [ ] Filebeat update
 - [ ] winlogbeat update
-- [ ] \_foxit_reader update
-- [ ] chef self update
+- [ ] foxit_reader update
 - [ ] mcafee4 update
+
 - [ ] Auto update self repo
-- [ ] Update Datadog envs of chef
 - [ ] AWS elasticache redis update
 - [ ] Patch STP
 - [ ] Add project to mirror repo jobje

@@ -10,7 +10,7 @@ A command-line tool for managing AWS, GitLab, Datadog, and Terraform Cloud opera
 ## Features
 
 - **AWS Authentication**: Authenticate AWS CLI using account names
-- **GitLab Operations**: 
+- **GitLab Operations**:
   - Create merge requests (develop to main, main to develop)
   - Merge approved MRs
   - Remove merged branches
@@ -52,8 +52,8 @@ lizzy config edit
 {
   "aws": {
     "accounts": [
-      {"name": "dev", "id": "123456789"},
-      {"name": "prod", "id": "987654321"}
+      { "name": "dev", "id": "123456789" },
+      { "name": "prod", "id": "987654321" }
     ]
   },
   "gitlab": {
@@ -175,6 +175,7 @@ ruff format .
 ### Code Quality
 
 This project uses:
+
 - **pytest** for testing
 - **ruff** for linting and formatting (replaces black, flake8, pylint)
 - **mypy** for type checking (optional)
@@ -183,6 +184,7 @@ This project uses:
 ### Continuous Integration
 
 GitHub Actions runs automated tests on:
+
 - Python 3.9, 3.10, 3.11, 3.12
 - Every push to master, main, develop
 - Every pull request
