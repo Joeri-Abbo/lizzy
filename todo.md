@@ -8,7 +8,6 @@
 - [ ] foxit_reader update
 - [ ] mcafee4 update
 
-- [ ] Auto update self repo
 - [ ] AWS elasticache redis update
 - [ ] Patch STP
 - [ ] Add project to mirror repo jobje
