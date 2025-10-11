@@ -6,11 +6,9 @@
 - [ ] Filebeat update
 - [ ] winlogbeat update
 - [ ] foxit_reader update
-- [ ] chef self update
 - [ ] mcafee4 update
 
 - [ ] Auto update self repo
-- [ ] Update Datadog envs of chef
 - [ ] AWS elasticache redis update
 - [ ] Patch STP
 - [ ] Add project to mirror repo jobje
