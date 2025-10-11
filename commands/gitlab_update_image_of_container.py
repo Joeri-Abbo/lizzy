@@ -80,24 +80,33 @@ class GitlabUpdateImageOfContainerCommand(BaseCommand):
 
             gl = setup_gitlab()
             project = gl.projects.get(component["project_name_with_namespace"])
-            
+
             # Verify file exists before attempting to update
             try:
                 file = project.files.get(file_path=path, ref=component["branch"])
             except Exception as e:
-                click.echo(f"❌ Error: File not found at path '{path}' on branch '{component['branch']}'", err=True)
+                click.echo(
+                    f"❌ Error: File not found at path '{path}' on branch '{component['branch']}'",
+                    err=True,
+                )
                 click.echo(f"   GitLab error: {str(e)}", err=True)
-                
+
                 # Try to list files in the repository to help debug
                 try:
                     click.echo(f"\n🔍 Searching for files in the repository...")
-                    tree = project.repository_tree(ref=component["branch"], recursive=True, per_page=100)
-                    
+                    tree = project.repository_tree(
+                        ref=component["branch"], recursive=True, per_page=100
+                    )
+
                     # Filter for .tf files
-                    tf_files = [item['path'] for item in tree if item['path'].endswith('.tf')]
-                    
+                    tf_files = [
+                        item["path"] for item in tree if item["path"].endswith(".tf")
+                    ]
+
                     if tf_files:
-                        click.echo(f"\n📁 Found {len(tf_files)} Terraform files in the repository:")
+                        click.echo(
+                            f"\n📁 Found {len(tf_files)} Terraform files in the repository:"
+                        )
                         for tf_file in tf_files[:20]:  # Show first 20
                             click.echo(f"   - {tf_file}")
                         if len(tf_files) > 20:
@@ -105,33 +114,42 @@ class GitlabUpdateImageOfContainerCommand(BaseCommand):
                     else:
                         click.echo("   No .tf files found in the repository")
                 except Exception as tree_error:
-                    click.echo(f"   Could not list repository files: {str(tree_error)}", err=True)
-                
+                    click.echo(
+                        f"   Could not list repository files: {str(tree_error)}",
+                        err=True,
+                    )
+
                 return
-            
+
             terraform_module = file.decode().decode("utf-8")
-            
+
             # Check if the pattern exists in the file
             if not re.search(r'image_version\s*=\s*".*"', terraform_module):
-                click.echo(f"⚠️  Warning: Pattern 'image_version = \"...\"' not found in {path}", err=True)
-                click.echo(f"   The file may not contain the expected Terraform variable.", err=True)
-                
+                click.echo(
+                    f"⚠️  Warning: Pattern 'image_version = \"...\"' not found in {path}",
+                    err=True,
+                )
+                click.echo(
+                    f"   The file may not contain the expected Terraform variable.",
+                    err=True,
+                )
+
                 # Show a preview of the file content
-                lines = terraform_module.split('\n')[:20]
+                lines = terraform_module.split("\n")[:20]
                 click.echo(f"\n📄 File preview (first 20 lines):")
                 for i, line in enumerate(lines, 1):
                     click.echo(f"   {i}: {line}")
-                
+
                 if not click.confirm("\nDo you want to continue anyway?"):
                     click.echo("Update cancelled.")
                     return
-            
+
             updated_module = re.sub(
                 r'image_version\s*=\s*".*"',
                 f'image_version = "{tag}"',
                 terraform_module,
             )
-            
+
             commit_data = {
                 "branch": component["branch"],
                 "commit_message": message,
@@ -147,7 +165,7 @@ class GitlabUpdateImageOfContainerCommand(BaseCommand):
                     "content": updated_module,
                 }
             )
-            
+
             try:
                 project.commits.create(commit_data)
                 click.echo("✅ Component updated successfully.")
@@ -155,5 +173,3 @@ class GitlabUpdateImageOfContainerCommand(BaseCommand):
             except Exception as commit_error:
                 click.echo(f"❌ Error creating commit: {str(commit_error)}", err=True)
                 return
-    
-        
