@@ -4,7 +4,15 @@ setup(
     name="lizzy-cli",
     version="0.0.1",
     packages=find_packages(),
-    install_requires=["click", "requests", "gimme-aws-creds", "boto3", "python-gitlab"],
+    install_requires=[
+        "click",
+        "requests",
+        "gimme-aws-creds",
+        "boto3",
+        "python-gitlab",
+        "PyChef",
+        "setuptools"
+    ],
     entry_points={
         "console_scripts": [
             "lizzy=lizzy.cli:lizzy",
