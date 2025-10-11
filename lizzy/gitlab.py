@@ -103,7 +103,7 @@ def fetch_approved_merge_requests(yolo: bool = False) -> None:
                 continue
 
             mr_detail = proj.mergerequests.get(mr.iid)
-            pipelines = mr_detail.pipelines.list(per_page=1)
+            pipelines = mr_detail.pipelines.list(per_page=1,get_all=True)
 
             if not pipelines:
                 click.echo(f"No pipelines for MR {mr.title}")
