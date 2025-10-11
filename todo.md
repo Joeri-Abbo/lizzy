@@ -10,7 +10,5 @@
 
 - [ ] AWS elasticache redis update
 - [ ] Patch STP
-- [ ] Add project to mirror repo jobje
-- [ ] Change tag of container X for Dev / EXP
 - [ ] bulk edit
 - [ ] Ec2 restart based on AWS account
