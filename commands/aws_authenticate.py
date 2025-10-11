@@ -1,6 +1,6 @@
 import click
 
-from lizzy.aws import get_aws_accounts, get_aws_credentials, get_config_accounts
+from lizzy.aws import get_aws_credentials, get_config_accounts
 from lizzy.cli import BaseCommand
 
 
