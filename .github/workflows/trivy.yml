@@ -41,7 +41,7 @@ jobs:
                 docker build -t joeri-abbo/lizzy:${{ github.sha }} .
             
             - name: Run Trivy vulnerability scanner on Docker image
-              uses: aquasecurity/trivy-action@0.28.0
+              uses: aquasecurity/trivy-action@0.33.1
               with:
                   scan-type: 'image'
                   image-ref: 'joeri-abbo/lizzy:${{ github.sha }}'
