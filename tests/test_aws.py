@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
-from lizzy.aws import get_account_by_name, get_aws_accounts, get_aws_credentials
+from lizzy.helpers.aws import get_account_by_name, get_aws_accounts, get_aws_credentials
 
 
 class TestGetAwsAccounts:

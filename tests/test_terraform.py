@@ -1,10 +1,10 @@
-"""Tests for lizzy.terraform module."""
+"""Tests for lizzy.helpers.terraform module."""
 
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from lizzy.terraform import (
+from lizzy.helpers.terraform import (
     create_slack_notification,
     get_headers,
     get_notifications,
@@ -19,7 +19,7 @@ from lizzy.terraform import (
 class TestGetOrganization:
     """Test get_organization function."""
 
-    @patch("lizzy.terraform.get_setting")
+    @patch("lizzy.helpers.terraform.get_setting")
     def test_get_organization_returns_org_name(self, mock_get_setting):
         """Test that get_organization returns the organization name."""
         mock_get_setting.return_value = "test-organization"
@@ -33,7 +33,7 @@ class TestGetOrganization:
 class TestGetHeaders:
     """Test get_headers function."""
 
-    @patch("lizzy.terraform.get_setting")
+    @patch("lizzy.helpers.terraform.get_setting")
     def test_get_headers_returns_correct_format(self, mock_get_setting):
         """Test that get_headers returns properly formatted headers."""
         mock_get_setting.return_value = "test_token_123"
@@ -50,8 +50,8 @@ class TestGetHeaders:
 class TestGetRequest:
     """Test get_request function."""
 
-    @patch("lizzy.terraform.get_headers")
-    @patch("lizzy.terraform.requests.get")
+    @patch("lizzy.helpers.terraform.get_headers")
+    @patch("lizzy.helpers.terraform.requests.get")
     def test_get_request_makes_request_with_headers(self, mock_get, mock_get_headers):
         """Test that get_request makes a GET request with proper headers."""
         mock_get_headers.return_value = {"Authorization": "Bearer token"}
@@ -67,8 +67,8 @@ class TestGetRequest:
         )
         mock_response.raise_for_status.assert_called_once()
 
-    @patch("lizzy.terraform.get_headers")
-    @patch("lizzy.terraform.requests.get")
+    @patch("lizzy.helpers.terraform.get_headers")
+    @patch("lizzy.helpers.terraform.requests.get")
     def test_get_request_raises_on_error(self, mock_get, mock_get_headers):
         """Test that get_request raises exception on HTTP error."""
         mock_get_headers.return_value = {"Authorization": "Bearer token"}
@@ -83,8 +83,8 @@ class TestGetRequest:
 class TestPostRequest:
     """Test post_request function."""
 
-    @patch("lizzy.terraform.get_headers")
-    @patch("lizzy.terraform.requests.post")
+    @patch("lizzy.helpers.terraform.get_headers")
+    @patch("lizzy.helpers.terraform.requests.post")
     def test_post_request_makes_request_with_payload(self, mock_post, mock_get_headers):
         """Test that post_request makes a POST request with payload and headers."""
         mock_get_headers.return_value = {"Authorization": "Bearer token"}
@@ -106,8 +106,8 @@ class TestPostRequest:
 class TestGetWorkspaces:
     """Test get_workspaces function."""
 
-    @patch("lizzy.terraform.get_organization")
-    @patch("lizzy.terraform.get_request")
+    @patch("lizzy.helpers.terraform.get_organization")
+    @patch("lizzy.helpers.terraform.get_request")
     @patch("builtins.print")
     @patch("click.echo")
     def test_get_workspaces_returns_all_workspaces(
@@ -139,8 +139,8 @@ class TestGetWorkspaces:
         assert result[1]["id"] == "ws-2"
         assert mock_get_request.call_count == 2
 
-    @patch("lizzy.terraform.get_organization")
-    @patch("lizzy.terraform.get_request")
+    @patch("lizzy.helpers.terraform.get_organization")
+    @patch("lizzy.helpers.terraform.get_request")
     @patch("builtins.print")
     def test_get_workspaces_handles_single_page(
         self, mock_print, mock_get_request, mock_get_org
@@ -166,7 +166,7 @@ class TestGetWorkspaces:
 class TestGetNotifications:
     """Test get_notifications function."""
 
-    @patch("lizzy.terraform.get_request")
+    @patch("lizzy.helpers.terraform.get_request")
     def test_get_notifications_returns_notifications_list(self, mock_get_request):
         """Test that get_notifications returns the list of notifications."""
         mock_response = MagicMock()
@@ -190,7 +190,7 @@ class TestGetNotifications:
 class TestCreateSlackNotification:
     """Test create_slack_notification function."""
 
-    @patch("lizzy.terraform.post_request")
+    @patch("lizzy.helpers.terraform.post_request")
     @patch("click.echo")
     def test_create_slack_notification_returns_true_on_success(
         self, mock_echo, mock_post_request
@@ -214,7 +214,7 @@ class TestCreateSlackNotification:
         assert payload["data"]["attributes"]["url"] == "https://hooks.slack.com/test"
         assert "run:created" in payload["data"]["attributes"]["triggers"]
 
-    @patch("lizzy.terraform.post_request")
+    @patch("lizzy.helpers.terraform.post_request")
     @patch("click.echo")
     def test_create_slack_notification_returns_false_on_failure(
         self, mock_echo, mock_post_request
@@ -232,10 +232,10 @@ class TestCreateSlackNotification:
 class TestSetSlackWebhook:
     """Test set_slack_webhook function."""
 
-    @patch("lizzy.terraform.get_setting")
-    @patch("lizzy.terraform.get_workspaces")
-    @patch("lizzy.terraform.get_notifications")
-    @patch("lizzy.terraform.create_slack_notification")
+    @patch("lizzy.helpers.terraform.get_setting")
+    @patch("lizzy.helpers.terraform.get_workspaces")
+    @patch("lizzy.helpers.terraform.get_notifications")
+    @patch("lizzy.helpers.terraform.create_slack_notification")
     @patch("click.echo")
     def test_set_slack_webhook_adds_webhook_to_unconfigured_workspaces(
         self,
@@ -268,7 +268,7 @@ class TestSetSlackWebhook:
             "ws-1", "https://hooks.slack.com/test"
         )
 
-    @patch("lizzy.terraform.get_setting")
+    @patch("lizzy.helpers.terraform.get_setting")
     def test_set_slack_webhook_raises_error_when_webhook_missing(
         self, mock_get_setting
     ):
@@ -280,9 +280,9 @@ class TestSetSlackWebhook:
 
         assert "Slack webhook URL is not set" in str(exc_info.value)
 
-    @patch("lizzy.terraform.get_setting")
-    @patch("lizzy.terraform.get_workspaces")
-    @patch("lizzy.terraform.get_notifications")
+    @patch("lizzy.helpers.terraform.get_setting")
+    @patch("lizzy.helpers.terraform.get_workspaces")
+    @patch("lizzy.helpers.terraform.get_notifications")
     @patch("click.echo")
     def test_set_slack_webhook_skips_already_configured_workspaces(
         self, mock_echo, mock_get_notifications, mock_get_workspaces, mock_get_setting

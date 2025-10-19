@@ -1,10 +1,10 @@
-"""Tests for lizzy.gitlab module."""
+"""Tests for lizzy.helpers.gitlab module."""
 
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from lizzy.gitlab import (
+from lizzy.helpers.gitlab import (
     develop_to_main,
     fetch_approved_merge_requests,
     main_to_develop,
@@ -16,8 +16,8 @@ from lizzy.gitlab import (
 class TestSetupGitlab:
     """Test setup_gitlab function."""
 
-    @patch("lizzy.gitlab.get_setting")
-    @patch("lizzy.gitlab.gitlab.Gitlab")
+    @patch("lizzy.helpers.gitlab.get_setting")
+    @patch("lizzy.helpers.gitlab.gitlab.Gitlab")
     def test_setup_gitlab_returns_gitlab_instance(self, mock_gitlab, mock_get_setting):
         """Test that setup_gitlab returns a configured GitLab instance."""
         mock_get_setting.return_value = "test_token_123"
@@ -32,7 +32,7 @@ class TestSetupGitlab:
             "https://gitlab.com", private_token="test_token_123"
         )
 
-    @patch("lizzy.gitlab.get_setting")
+    @patch("lizzy.helpers.gitlab.get_setting")
     def test_setup_gitlab_raises_error_when_token_missing(self, mock_get_setting):
         """Test that setup_gitlab raises ValueError when API token is missing."""
         mock_get_setting.return_value = None
@@ -46,8 +46,8 @@ class TestSetupGitlab:
 class TestDevelopToMain:
     """Test develop_to_main function."""
 
-    @patch("lizzy.gitlab.get_setting")
-    @patch("lizzy.gitlab.setup_gitlab")
+    @patch("lizzy.helpers.gitlab.get_setting")
+    @patch("lizzy.helpers.gitlab.setup_gitlab")
     @patch("builtins.print")
     def test_develop_to_main_creates_merge_requests(
         self, mock_print, mock_setup_gitlab, mock_get_setting
@@ -88,8 +88,8 @@ class TestDevelopToMain:
         assert call_args["target_branch"] == "main"
         assert call_args["title"] == "Develop to main"
 
-    @patch("lizzy.gitlab.get_setting")
-    @patch("lizzy.gitlab.setup_gitlab")
+    @patch("lizzy.helpers.gitlab.get_setting")
+    @patch("lizzy.helpers.gitlab.setup_gitlab")
     @patch("builtins.print")
     def test_develop_to_main_handles_errors(
         self, mock_print, mock_setup_gitlab, mock_get_setting
@@ -114,8 +114,8 @@ class TestDevelopToMain:
         error_calls = [c for c in mock_print.call_args_list if "Failed" in str(c)]
         assert len(error_calls) > 0
 
-    @patch("lizzy.gitlab.get_setting")
-    @patch("lizzy.gitlab.setup_gitlab")
+    @patch("lizzy.helpers.gitlab.get_setting")
+    @patch("lizzy.helpers.gitlab.setup_gitlab")
     def test_develop_to_main_handles_empty_components(
         self, mock_setup_gitlab, mock_get_setting
     ):
@@ -133,8 +133,8 @@ class TestDevelopToMain:
 class TestMainToDevelop:
     """Test main_to_develop function."""
 
-    @patch("lizzy.gitlab.get_setting")
-    @patch("lizzy.gitlab.setup_gitlab")
+    @patch("lizzy.helpers.gitlab.get_setting")
+    @patch("lizzy.helpers.gitlab.setup_gitlab")
     @patch("builtins.print")
     def test_main_to_develop_creates_merge_requests(
         self, mock_print, mock_setup_gitlab, mock_get_setting
@@ -169,8 +169,8 @@ class TestMainToDevelop:
 class TestRemoveMergedBranches:
     """Test remove_merged_branches function."""
 
-    @patch("lizzy.gitlab.get_setting")
-    @patch("lizzy.gitlab.setup_gitlab")
+    @patch("lizzy.helpers.gitlab.get_setting")
+    @patch("lizzy.helpers.gitlab.setup_gitlab")
     @patch("click.echo")
     def test_remove_merged_branches_deletes_merged_branches(
         self, mock_echo, mock_setup_gitlab, mock_get_setting
@@ -216,8 +216,8 @@ class TestRemoveMergedBranches:
         mock_proj.branches.delete.assert_any_call("feature/test")
         mock_proj.branches.delete.assert_any_call("feature/old")
 
-    @patch("lizzy.gitlab.get_setting")
-    @patch("lizzy.gitlab.setup_gitlab")
+    @patch("lizzy.helpers.gitlab.get_setting")
+    @patch("lizzy.helpers.gitlab.setup_gitlab")
     @patch("click.echo")
     def test_remove_merged_branches_handles_errors(
         self, mock_echo, mock_setup_gitlab, mock_get_setting
@@ -253,8 +253,8 @@ class TestRemoveMergedBranches:
 class TestFetchApprovedMergeRequests:
     """Test fetch_approved_merge_requests function."""
 
-    @patch("lizzy.gitlab.get_setting")
-    @patch("lizzy.gitlab.setup_gitlab")
+    @patch("lizzy.helpers.gitlab.get_setting")
+    @patch("lizzy.helpers.gitlab.setup_gitlab")
     @patch("click.echo")
     @patch("builtins.input")
     def test_fetch_approved_merge_requests_merges_on_confirmation(
@@ -305,8 +305,8 @@ class TestFetchApprovedMergeRequests:
 
         mock_mr_detail.merge.assert_called_once()
 
-    @patch("lizzy.gitlab.get_setting")
-    @patch("lizzy.gitlab.setup_gitlab")
+    @patch("lizzy.helpers.gitlab.get_setting")
+    @patch("lizzy.helpers.gitlab.setup_gitlab")
     @patch("click.echo")
     def test_fetch_approved_merge_requests_auto_merges_with_yolo(
         self, mock_echo, mock_setup_gitlab, mock_get_setting
@@ -351,8 +351,8 @@ class TestFetchApprovedMergeRequests:
 
         mock_mr_detail.merge.assert_called_once()
 
-    @patch("lizzy.gitlab.get_setting")
-    @patch("lizzy.gitlab.setup_gitlab")
+    @patch("lizzy.helpers.gitlab.get_setting")
+    @patch("lizzy.helpers.gitlab.setup_gitlab")
     @patch("click.echo")
     def test_fetch_approved_merge_requests_skips_failed_pipelines(
         self, mock_echo, mock_setup_gitlab, mock_get_setting

@@ -1,7 +1,7 @@
 import click
 import gitlab
 
-from lizzy.config import get_setting
+from lizzy.helpers.config import get_setting
 
 
 def setup_gitlab() -> gitlab.Gitlab:

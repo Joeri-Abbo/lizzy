@@ -1,7 +1,7 @@
 import gimme_aws_creds.main
 import gimme_aws_creds.ui
 import click
-from lizzy.config import get_setting
+from lizzy.helpers.config import get_setting
 import boto3
 from botocore.exceptions import BotoCoreError, ClientError
 

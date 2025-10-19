@@ -1,7 +1,7 @@
 import click
 import requests
 import concurrent.futures
-from lizzy.config import get_setting
+from lizzy.helpers.config import get_setting
 import time
 
 BASE_URL = "https://app.terraform.io"
@@ -130,13 +130,13 @@ def set_slack_webhook() -> None:
 def cancel_run(run_id: str, status: str, workspace_name: str) -> None:
     """Cancel or discard a specific Terraform run based on its status."""
     run_link = f"{BASE_URL}/app/{get_organization()}/{workspace_name}/runs/{run_id}"
-    
+
     # For planned status, try to discard first since that's the proper action
     if status == "planned":
         click.echo(f"Run {run_id} is in 'planned' status. Attempting to discard...")
         discard_url = f"{BASE_URL}/api/v2/runs/{run_id}/actions/discard"
         discard_response = requests.post(discard_url, headers=get_headers())
-        
+
         if discard_response.status_code == 200:
             click.echo(f"✅ Successfully discarded run {run_id} (Status: {status})")
             return
@@ -144,8 +144,10 @@ def cancel_run(run_id: str, status: str, workspace_name: str) -> None:
             click.echo(f"✅ Discard initiated for run {run_id} (Status: {status})")
             return
         else:
-            click.echo(f"⚠️  Failed to discard run {run_id}: {discard_response.status_code}. Attempting to cancel...")
-    
+            click.echo(
+                f"⚠️  Failed to discard run {run_id}: {discard_response.status_code}. Attempting to cancel..."
+            )
+
     # Try to cancel the run (for non-planned runs or if discard failed)
     cancel_url = f"{BASE_URL}/api/v2/runs/{run_id}/actions/cancel"
     cancel_response = requests.post(cancel_url, headers=get_headers())
@@ -155,9 +157,13 @@ def cancel_run(run_id: str, status: str, workspace_name: str) -> None:
     elif cancel_response.status_code == 202:
         click.echo(f"✅ Cancellation initiated for run {run_id} (Status: {status})")
     elif cancel_response.status_code == 409:
-        click.echo(f"⚠️  Run {run_id} is in a state that cannot be cancelled (Status: {status}). View it here: {run_link}")
+        click.echo(
+            f"⚠️  Run {run_id} is in a state that cannot be cancelled (Status: {status}). View it here: {run_link}"
+        )
     else:
-        click.echo(f"❌ Failed to cancel run {run_id}: {cancel_response.status_code}. View it here: {run_link}")
+        click.echo(
+            f"❌ Failed to cancel run {run_id}: {cancel_response.status_code}. View it here: {run_link}"
+        )
 
 
 def discard_plans() -> None:

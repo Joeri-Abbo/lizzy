@@ -1,4 +1,4 @@
-from lizzy.config import get_setting
+from lizzy.helpers.config import get_setting
 from lizzy.github import get_tags_of_repo
 # --- Compatibility Fixes (place before importing chef) ---
 import collections
