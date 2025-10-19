@@ -44,7 +44,7 @@ jobs:
           ruff check . --exit-zero
 
   test:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     strategy:
       matrix:
         python-version: [ "3.13", "3.14"]
