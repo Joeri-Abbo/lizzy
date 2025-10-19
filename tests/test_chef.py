@@ -1,8 +1,16 @@
 """Tests for lizzy.helpers.chef module."""
 
 from unittest.mock import MagicMock, patch, call
+import sys
+import warnings
 
 import pytest
+
+# Suppress warnings for Python 3.13+ compatibility
+if sys.version_info >= (3, 13):
+    warnings.filterwarnings("ignore", category=DeprecationWarning, module="chef")
+    warnings.filterwarnings("ignore", category=DeprecationWarning, module="rsa")
+    warnings.filterwarnings("ignore", category=DeprecationWarning, module="cryptography")
 
 from lizzy.helpers.chef import (
     setup_chef_api,

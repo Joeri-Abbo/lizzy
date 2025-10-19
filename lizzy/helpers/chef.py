@@ -3,13 +3,22 @@ from lizzy.helpers.github import get_tags_of_repo
 # --- Compatibility Fixes (place before importing chef) ---
 import collections
 import collections.abc
+import sys
 
+# Fix for Python 3.13+ compatibility
 if not hasattr(collections, "Mapping"):
     collections.Mapping = collections.abc.Mapping
 if not hasattr(collections, "MutableMapping"):
     collections.MutableMapping = collections.abc.MutableMapping
 if not hasattr(collections, "Sequence"):
     collections.Sequence = collections.abc.Sequence
+
+# Additional Python 3.13+ compatibility fixes
+if sys.version_info >= (3, 13):
+    # Add any additional compatibility patches for newer Python versions
+    import warnings
+    warnings.filterwarnings("ignore", category=DeprecationWarning, module="chef")
+    warnings.filterwarnings("ignore", category=DeprecationWarning, module="rsa")
 # --- End Compatibility Fixes ---
 
 from chef import ChefAPI, Environment
