@@ -14,6 +14,7 @@ setup(
         "cryptography>=41.0.0",
         "cffi>=1.16.0",
         "rsa>=4.9",
+        "distro>=1.8.0",
         "setuptools"
     ],
     entry_points={

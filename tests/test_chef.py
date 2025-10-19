@@ -3,14 +3,29 @@
 from unittest.mock import MagicMock, patch, call
 import sys
 import warnings
+import platform
 
 import pytest
 
+# Fix for platform.linux_distribution() removal in Python 3.8+
+if not hasattr(platform, "linux_distribution"):
+    def linux_distribution(supported_dists=None):
+        """Monkey patch for removed platform.linux_distribution()."""
+        try:
+            import distro
+            return (distro.name(), distro.version(), distro.codename())
+        except ImportError:
+            # Fallback if distro is not available
+            return ("Unknown", "Unknown", "Unknown")
+    
+    platform.linux_distribution = linux_distribution
+
 # Suppress warnings for Python 3.13+ compatibility
-if sys.version_info >= (3, 13):
+if sys.version_info >= (3, 8):
     warnings.filterwarnings("ignore", category=DeprecationWarning, module="chef")
     warnings.filterwarnings("ignore", category=DeprecationWarning, module="rsa")
     warnings.filterwarnings("ignore", category=DeprecationWarning, module="cryptography")
+    warnings.filterwarnings("ignore", category=UserWarning, module="chef")
 
 from lizzy.helpers.chef import (
     setup_chef_api,

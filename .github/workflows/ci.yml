@@ -79,6 +79,7 @@ jobs:
           pip install "cffi>=1.16.0"
           pip install "rsa>=4.9"
           pip install "six>=1.16.0"
+          pip install "distro>=1.8.0"
           # Install PyChef with retries in case of issues
           for i in {1..3}; do
             if pip install PyChef; then
