@@ -25,7 +25,6 @@ class TestCLICommands:
         assert "chef" in result.output
         assert "datadog" in result.output
         assert "gitlab" in result.output
-        assert "terraform" in result.output
         assert "workflows" in result.output
         assert "self" in result.output
 
@@ -84,7 +83,7 @@ class TestAWSCommands:
         assert "AWS_SECRET_ACCESS_KEY" in result.output
         assert "AWS_SESSION_TOKEN" in result.output
 
-    @patch('commands.aws_commands.run_aws_fargate_restart')
+    @patch('lizzy.helpers.aws.run_aws_fargate_restart')
     def test_aws_fargate_restart_command(self, mock_restart):
         """Test AWS Fargate restart command."""
         result = self.runner.invoke(lizzy, ['aws', 'fargate-restart'])
@@ -92,7 +91,7 @@ class TestAWSCommands:
         assert result.exit_code == 0
         mock_restart.assert_called_once_with(all_services=False)
 
-    @patch('commands.aws_commands.run_aws_fargate_restart')
+    @patch('lizzy.helpers.aws.run_aws_fargate_restart')
     def test_aws_fargate_restart_all_command(self, mock_restart):
         """Test AWS Fargate restart all command."""
         result = self.runner.invoke(lizzy, ['aws', 'fargate-restart-all'])
@@ -115,7 +114,7 @@ class TestDatadogCommands:
         """Set up test fixtures."""
         self.runner = CliRunner()
 
-    @patch('commands.datadog_commands.get_fetch_versions')
+    @patch('lizzy.helpers.datadog.get_fetch_versions')
     def test_datadog_fetch_versions_command(self, mock_get_versions):
         """Test Datadog fetch versions command."""
         mock_get_versions.return_value = ["7.50.0", "7.51.0"]
@@ -126,7 +125,7 @@ class TestDatadogCommands:
         assert "Datadog Agent: 7.50.0" in result.output
         assert "Datadog Agent: 7.51.0" in result.output
 
-    @patch('commands.datadog_commands.get_highest_version')
+    @patch('lizzy.helpers.datadog.get_highest_version')
     def test_datadog_fetch_version_latest_command(self, mock_get_highest):
         """Test Datadog fetch latest version command."""
         mock_get_highest.return_value = "7.51.0"
@@ -136,8 +135,8 @@ class TestDatadogCommands:
         assert result.exit_code == 0
         assert "Latest Datadog Agent: 7.51.0" in result.output
 
-    @patch('commands.datadog_commands.get_highest_version')
-    @patch('commands.datadog_commands.bump_datadog_components')
+    @patch('lizzy.helpers.datadog.get_highest_version')
+    @patch('lizzy.helpers.datadog.bump_datadog_components')
     def test_datadog_bump_components_latest_command(self, mock_bump, mock_get_highest):
         """Test Datadog bump components latest command."""
         mock_get_highest.return_value = "7.51.0"
@@ -147,8 +146,8 @@ class TestDatadogCommands:
         assert result.exit_code == 0
         mock_bump.assert_called_once_with("7.51.0")
 
-    @patch('commands.datadog_commands.bump_datadog_components')
-    @patch('commands.datadog_commands.get_fetch_versions')
+    @patch('lizzy.helpers.datadog.bump_datadog_components')
+    @patch('lizzy.helpers.datadog.get_fetch_versions')
     def test_datadog_bump_components_with_version(self, mock_get_versions, mock_bump):
         """Test Datadog bump components with specific version."""
         mock_get_versions.return_value = ["7.50.0", "7.51.0"]
@@ -170,7 +169,7 @@ class TestGitlabCommands:
         """Set up test fixtures."""
         self.runner = CliRunner()
 
-    @patch('commands.gitlab_commands.develop_to_main')
+    @patch('lizzy.helpers.gitlab.develop_to_main')
     def test_gitlab_develop_to_main_command(self, mock_develop_to_main):
         """Test GitLab develop to main command."""
         result = self.runner.invoke(lizzy, ['gitlab', 'develop-to-main'])
@@ -178,7 +177,7 @@ class TestGitlabCommands:
         assert result.exit_code == 0
         mock_develop_to_main.assert_called_once()
 
-    @patch('commands.gitlab_commands.main_to_develop')
+    @patch('lizzy.helpers.gitlab.main_to_develop')
     def test_gitlab_main_to_develop_command(self, mock_main_to_develop):
         """Test GitLab main to develop command."""
         result = self.runner.invoke(lizzy, ['gitlab', 'main-to-develop'])
@@ -186,7 +185,7 @@ class TestGitlabCommands:
         assert result.exit_code == 0
         mock_main_to_develop.assert_called_once()
 
-    @patch('commands.gitlab_commands.fetch_approved_merge_requests')
+    @patch('lizzy.helpers.gitlab.fetch_approved_merge_requests')
     def test_gitlab_merge_approved_command(self, mock_fetch_approved):
         """Test GitLab merge approved command."""
         result = self.runner.invoke(lizzy, ['gitlab', 'merge-approved'])
@@ -194,37 +193,13 @@ class TestGitlabCommands:
         assert result.exit_code == 0
         mock_fetch_approved.assert_called_once()
 
-    @patch('commands.gitlab_commands.remove_merged_branches')
+    @patch('lizzy.helpers.gitlab.remove_merged_branches')
     def test_gitlab_remove_merged_branches_command(self, mock_remove_branches):
         """Test GitLab remove merged branches command."""
         result = self.runner.invoke(lizzy, ['gitlab', 'remove-merged-branches'])
         
         assert result.exit_code == 0
         mock_remove_branches.assert_called_once()
-
-
-class TestTerraformCommands:
-    """Test Terraform CLI commands."""
-
-    def setup_method(self):
-        """Set up test fixtures."""
-        self.runner = CliRunner()
-
-    @patch('commands.terraform_commands.discard_plans')
-    def test_terraform_discard_plans_command(self, mock_discard_plans):
-        """Test Terraform discard plans command."""
-        result = self.runner.invoke(lizzy, ['terraform', 'discard-plans'])
-        
-        assert result.exit_code == 0
-        mock_discard_plans.assert_called_once()
-
-    @patch('commands.terraform_commands.set_slack_webhook')
-    def test_terraform_set_slack_webhook_command(self, mock_set_webhook):
-        """Test Terraform set Slack webhook command."""
-        result = self.runner.invoke(lizzy, ['terraform', 'set-slack-webhook'])
-        
-        assert result.exit_code == 0
-        mock_set_webhook.assert_called_once()
 
 
 class TestChefCommands:
@@ -234,7 +209,7 @@ class TestChefCommands:
         """Set up test fixtures."""
         self.runner = CliRunner()
 
-    @patch('commands.chef_commands.update_chef_version')
+    @patch('lizzy.helpers.chef.update_chef_version')
     def test_chef_modify_chef_version_command(self, mock_update_chef):
         """Test Chef modify chef version command."""
         result = self.runner.invoke(lizzy, ['chef', 'modify-chef-version'])
@@ -242,7 +217,7 @@ class TestChefCommands:
         assert result.exit_code == 0
         mock_update_chef.assert_called_once()
 
-    @patch('commands.chef_commands.update_datadog_version')
+    @patch('lizzy.helpers.chef.update_datadog_version')
     def test_chef_modify_datadog_version_command(self, mock_update_datadog):
         """Test Chef modify datadog version command."""
         result = self.runner.invoke(lizzy, ['chef', 'modify-datadog-version'])
@@ -258,7 +233,7 @@ class TestSelfCommands:
         """Set up test fixtures."""
         self.runner = CliRunner()
 
-    @patch('commands.self_commands.edit_lizzy_config')
+    @patch('lizzy.helpers.config.edit_config')
     def test_self_config_command(self, mock_edit_config):
         """Test self config command."""
         result = self.runner.invoke(lizzy, ['self', 'config'])
@@ -266,12 +241,14 @@ class TestSelfCommands:
         assert result.exit_code == 0
         mock_edit_config.assert_called_once()
 
-    @patch('commands.self_commands.subprocess.run')
-    @patch('commands.self_commands.tempfile.TemporaryDirectory')
-    def test_self_update_command(self, mock_temp_dir, mock_subprocess_run):
+    @patch('pathlib.Path.exists')
+    @patch('subprocess.run')
+    @patch('tempfile.TemporaryDirectory')
+    def test_self_update_command(self, mock_temp_dir, mock_subprocess_run, mock_path_exists):
         """Test self update command."""
         mock_temp_dir.return_value.__enter__.return_value = "/tmp/test"
         mock_subprocess_run.return_value = MagicMock()
+        mock_path_exists.return_value = True  # setup.py exists
 
         result = self.runner.invoke(lizzy, ['self', 'update'])
         
@@ -346,7 +323,7 @@ class TestSpaceSyntaxCommands:
         assert result.exit_code == 0
         assert "AWS_ACCESS_KEY_ID" in result.output
 
-    @patch('commands.datadog_commands.get_fetch_versions')
+    @patch('lizzy.helpers.datadog.get_fetch_versions')
     def test_space_syntax_datadog_fetch_versions(self, mock_get_versions):
         """Test that space syntax works for Datadog fetch versions."""
         mock_get_versions.return_value = ["7.50.0"]
@@ -356,7 +333,7 @@ class TestSpaceSyntaxCommands:
         assert result.exit_code == 0
         assert "Datadog Agent: 7.50.0" in result.output
 
-    @patch('commands.self_commands.edit_lizzy_config')
+    @patch('lizzy.helpers.config.edit_config')
     def test_space_syntax_self_config(self, mock_edit_config):
         """Test that space syntax works for self config."""
         result = self.runner.invoke(lizzy, ['self config'])

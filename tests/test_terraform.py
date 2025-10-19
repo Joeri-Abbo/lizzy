@@ -303,3 +303,93 @@ class TestSetSlackWebhook:
         # Verify message about already configured was echoed
         echo_calls = [str(call) for call in mock_echo.call_args_list]
         assert any("already configured" in call for call in echo_calls)
+
+
+class TestCancelRun:
+    """Test cancel_run function."""
+
+    @patch("lizzy.helpers.terraform.get_organization")
+    @patch("lizzy.helpers.terraform.get_headers")
+    @patch("lizzy.helpers.terraform.requests.post")
+    @patch("click.echo")
+    def test_cancel_run_discard_planned_success(self, mock_echo, mock_post, mock_get_headers, mock_get_org):
+        """Test canceling a planned run with successful discard."""
+        from lizzy.helpers.terraform import cancel_run
+        
+        mock_get_org.return_value = "test-org"
+        mock_get_headers.return_value = {"Authorization": "Bearer token"}
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_post.return_value = mock_response
+        
+        cancel_run("run-123", "planned", "test-workspace")
+        
+        mock_post.assert_called_once_with(
+            "https://app.terraform.io/api/v2/runs/run-123/actions/discard",
+            headers={"Authorization": "Bearer token"}
+        )
+        mock_echo.assert_any_call("✅ Successfully discarded run run-123 (Status: planned)")
+
+    @patch("lizzy.helpers.terraform.get_organization")
+    @patch("lizzy.helpers.terraform.get_headers")
+    @patch("lizzy.helpers.terraform.requests.post")
+    @patch("click.echo")
+    def test_cancel_run_discard_planned_initiated(self, mock_echo, mock_post, mock_get_headers, mock_get_org):
+        """Test canceling a planned run with discard initiated."""
+        from lizzy.helpers.terraform import cancel_run
+        
+        mock_get_org.return_value = "test-org"
+        mock_get_headers.return_value = {"Authorization": "Bearer token"}
+        mock_response = MagicMock()
+        mock_response.status_code = 202  # Discard initiated
+        mock_post.return_value = mock_response
+        
+        cancel_run("run-123", "planned", "test-workspace")
+        
+        mock_echo.assert_any_call("✅ Discard initiated for run run-123 (Status: planned)")
+
+    @patch("lizzy.helpers.terraform.get_organization")
+    @patch("lizzy.helpers.terraform.get_headers")
+    @patch("lizzy.helpers.terraform.requests.post")
+    @patch("click.echo")
+    def test_cancel_run_discard_failed_attempt_cancel(self, mock_echo, mock_post, mock_get_headers, mock_get_org):
+        """Test canceling a planned run when discard fails."""
+        from lizzy.helpers.terraform import cancel_run
+        
+        mock_get_org.return_value = "test-org"
+        mock_get_headers.return_value = {"Authorization": "Bearer token"}
+        
+        # Mock two calls: first fails (discard), second succeeds (cancel)
+        mock_responses = [MagicMock(), MagicMock()]
+        mock_responses[0].status_code = 400  # Discard fails
+        mock_responses[1].status_code = 200  # Cancel succeeds
+        mock_post.side_effect = mock_responses
+        
+        cancel_run("run-123", "planned", "test-workspace")
+        
+        assert mock_post.call_count == 2
+        mock_echo.assert_any_call("⚠️  Failed to discard run run-123: 400. Attempting to cancel...")
+        mock_echo.assert_any_call("✅ Successfully cancelled run run-123 (Status: planned)")
+
+    @patch("lizzy.helpers.terraform.get_organization")
+    @patch("lizzy.helpers.terraform.get_headers")
+    @patch("lizzy.helpers.terraform.requests.post")
+    @patch("click.echo")
+    def test_cancel_run_non_planned_status(self, mock_echo, mock_post, mock_get_headers, mock_get_org):
+        """Test canceling a run with non-planned status."""
+        from lizzy.helpers.terraform import cancel_run
+        
+        mock_get_org.return_value = "test-org"
+        mock_get_headers.return_value = {"Authorization": "Bearer token"}
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_post.return_value = mock_response
+        
+        cancel_run("run-123", "pending", "test-workspace")
+        
+        # Should skip discard and go directly to cancel
+        mock_post.assert_called_once_with(
+            "https://app.terraform.io/api/v2/runs/run-123/actions/cancel",
+            headers={"Authorization": "Bearer token"}
+        )
+        mock_echo.assert_any_call("✅ Successfully cancelled run run-123 (Status: pending)")

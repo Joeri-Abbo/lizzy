@@ -67,6 +67,7 @@ class AWSCommands(BaseCommand):
     def _fargate_restart():
         """Restart an AWS Fargate task of a specific service."""
         from lizzy.helpers.aws import run_aws_fargate_restart
+
         click.echo("Restarting AWS Fargate task.")
         run_aws_fargate_restart(all_services=False)
 
@@ -74,6 +75,7 @@ class AWSCommands(BaseCommand):
     def _fargate_restart_all():
         """Restart all AWS Fargate tasks."""
         from lizzy.helpers.aws import run_aws_fargate_restart
+
         click.echo("Restarting all AWS Fargate tasks...")
         run_aws_fargate_restart(all_services=True)
         click.echo("All AWS Fargate services have been restarted.")

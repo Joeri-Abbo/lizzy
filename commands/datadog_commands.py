@@ -14,7 +14,7 @@ class DatadogCommands(BaseCommand):
             pass
 
         @datadog.command(name="bump-components")
-        @click.option('--version', prompt=True, help='Datadog version to bump to')
+        @click.option("--version", prompt=True, help="Datadog version to bump to")
         def bump_components(version):
             """Bump Datadog components to a specific version."""
             DatadogCommands._bump_components(version)
@@ -36,7 +36,7 @@ class DatadogCommands(BaseCommand):
 
         # Register individual commands that show in main help with space syntax
         @command_group.command(name="datadog bump-components")
-        @click.option('--version', prompt=True, help='Datadog version to bump to')
+        @click.option("--version", prompt=True, help="Datadog version to bump to")
         def datadog_bump_components_main(version):
             """Bump Datadog components to a specific version."""
             DatadogCommands._bump_components(version)
@@ -60,8 +60,9 @@ class DatadogCommands(BaseCommand):
     def _bump_components(version):
         """Bump Datadog components to a specific version."""
         from lizzy.helpers.datadog import get_fetch_versions, bump_datadog_components
+
         click.echo("Bumping Datadog components...")
-        
+
         if click.confirm(f"Do you want to check if version {version} exists?"):
             versions = get_fetch_versions()
             if version not in versions:
@@ -69,7 +70,7 @@ class DatadogCommands(BaseCommand):
                 return
             else:
                 click.echo(f"Version {version} found. Proceeding with bump.")
-        
+
         bump_datadog_components(version)
         click.echo(f"Datadog components bumped to version {version}.")
 
@@ -77,6 +78,7 @@ class DatadogCommands(BaseCommand):
     def _bump_components_latest():
         """Bump Datadog components to the latest version."""
         from lizzy.helpers.datadog import get_highest_version, bump_datadog_components
+
         click.echo("Bumping Datadog components...")
         version = get_highest_version()
         bump_datadog_components(version)
@@ -86,6 +88,7 @@ class DatadogCommands(BaseCommand):
     def _fetch_versions():
         """Fetch available Datadog versions."""
         from lizzy.helpers.datadog import get_fetch_versions
+
         click.echo("Fetching Datadog versions...")
         for tag in sorted(get_fetch_versions()):
             click.echo(f"Datadog Agent: {tag}")
@@ -94,5 +97,6 @@ class DatadogCommands(BaseCommand):
     def _fetch_version_latest():
         """Fetch Datadog latest version."""
         from lizzy.helpers.datadog import get_highest_version
+
         click.echo("Fetching Datadog latest version...")
         click.echo(f"Latest Datadog Agent: {get_highest_version()}")
