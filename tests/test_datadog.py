@@ -1,10 +1,10 @@
-"""Tests for lizzy.datadog module."""
+"""Tests for lizzy.helpers.datadog module."""
 
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from lizzy.datadog import (
+from lizzy.helpers.datadog import (
     bump_datadog_components,
     filter_content,
     get_auth_token,
@@ -19,7 +19,7 @@ from lizzy.datadog import (
 class TestGetAuthToken:
     """Test get_auth_token function."""
 
-    @patch("lizzy.datadog.requests.get")
+    @patch("lizzy.helpers.datadog.requests.get")
     def test_get_auth_token_returns_token(self, mock_get):
         """Test that get_auth_token returns the authentication token."""
         mock_response = MagicMock()
@@ -36,7 +36,7 @@ class TestGetAuthToken:
         )
         mock_get.assert_called_once_with(expected_url)
 
-    @patch("lizzy.datadog.requests.get")
+    @patch("lizzy.helpers.datadog.requests.get")
     def test_get_auth_token_raises_on_error(self, mock_get):
         """Test that get_auth_token raises exception on HTTP error."""
         mock_response = MagicMock()
@@ -50,8 +50,8 @@ class TestGetAuthToken:
 class TestGetEcrTags:
     """Test get_ecr_tags function."""
 
-    @patch("lizzy.datadog.get_auth_token")
-    @patch("lizzy.datadog.requests.get")
+    @patch("lizzy.helpers.datadog.get_auth_token")
+    @patch("lizzy.helpers.datadog.requests.get")
     def test_get_ecr_tags_returns_all_tags(self, mock_get, mock_get_token):
         """Test that get_ecr_tags returns all tags with pagination."""
         mock_get_token.return_value = "test_token"
@@ -76,8 +76,8 @@ class TestGetEcrTags:
         assert result == ["7.50.0", "7.50.1", "7.50.2"]
         assert mock_get.call_count == 2
 
-    @patch("lizzy.datadog.get_auth_token")
-    @patch("lizzy.datadog.requests.get")
+    @patch("lizzy.helpers.datadog.get_auth_token")
+    @patch("lizzy.helpers.datadog.requests.get")
     def test_get_ecr_tags_handles_single_page(self, mock_get, mock_get_token):
         """Test that get_ecr_tags handles single page response."""
         mock_get_token.return_value = "test_token"
@@ -96,7 +96,7 @@ class TestGetEcrTags:
 class TestGetFetchVersions:
     """Test get_fetch_versions function."""
 
-    @patch("lizzy.datadog.get_ecr_tags")
+    @patch("lizzy.helpers.datadog.get_ecr_tags")
     def test_get_fetch_versions_filters_semantic_versions(self, mock_get_tags):
         """Test that get_fetch_versions filters out non-semantic version tags."""
         mock_get_tags.return_value = [
@@ -123,7 +123,7 @@ class TestGetFetchVersions:
 class TestPrintFetchVersions:
     """Test print_fetch_versions function."""
 
-    @patch("lizzy.datadog.get_fetch_versions")
+    @patch("lizzy.helpers.datadog.get_fetch_versions")
     @patch("click.echo")
     def test_print_fetch_versions_displays_sorted_versions(
         self, mock_echo, mock_get_versions
@@ -144,7 +144,7 @@ class TestPrintFetchVersions:
 class TestGetHighestVersion:
     """Test get_highest_version function."""
 
-    @patch("lizzy.datadog.get_fetch_versions")
+    @patch("lizzy.helpers.datadog.get_fetch_versions")
     def test_get_highest_version_returns_latest(self, mock_get_versions):
         """Test that get_highest_version returns the highest semantic version."""
         mock_get_versions.return_value = ["7.49.0", "7.50.1", "7.50.0", "7.51.0"]
@@ -153,7 +153,7 @@ class TestGetHighestVersion:
 
         assert result == "7.51.0"
 
-    @patch("lizzy.datadog.get_fetch_versions")
+    @patch("lizzy.helpers.datadog.get_fetch_versions")
     def test_get_highest_version_handles_single_version(self, mock_get_versions):
         """Test that get_highest_version handles single version."""
         mock_get_versions.return_value = ["7.50.0"]
@@ -205,7 +205,7 @@ class TestGetDatadogImage:
             {"name": "sidecar", "image": "sidecar:1.0"},
         ]
 
-        with patch("lizzy.datadog.filter_content", side_effect=lambda x: x):
+        with patch("lizzy.helpers.datadog.filter_content", side_effect=lambda x: x):
             result = get_datadog_image(items)
 
         assert "datadog/agent:7.50.0" in result
@@ -225,8 +225,8 @@ class TestGetDatadogImage:
 class TestBumpDatadogComponents:
     """Test bump_datadog_components function."""
 
-    @patch("lizzy.datadog.get_setting")
-    @patch("lizzy.datadog.setup_gitlab")
+    @patch("lizzy.helpers.datadog.get_setting")
+    @patch("lizzy.helpers.datadog.setup_gitlab")
     @patch("click.echo")
     def test_bump_datadog_components_processes_all_components(
         self, mock_echo, mock_gitlab, mock_get_setting
@@ -267,8 +267,8 @@ class TestBumpDatadogComponents:
         mock_project.commits.create.assert_called_once()
         mock_project.mergerequests.create.assert_called_once()
 
-    @patch("lizzy.datadog.get_setting")
-    @patch("lizzy.datadog.setup_gitlab")
+    @patch("lizzy.helpers.datadog.get_setting")
+    @patch("lizzy.helpers.datadog.setup_gitlab")
     @patch("click.echo")
     def test_bump_datadog_components_handles_errors(
         self, mock_echo, mock_gitlab, mock_get_setting

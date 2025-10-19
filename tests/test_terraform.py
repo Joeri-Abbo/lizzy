@@ -1,10 +1,10 @@
-"""Tests for lizzy.terraform module."""
+"""Tests for lizzy.helpers.terraform module."""
 
 from unittest.mock import MagicMock, patch
 
 import pytest
 
-from lizzy.terraform import (
+from lizzy.helpers.terraform import (
     create_slack_notification,
     get_headers,
     get_notifications,
@@ -19,7 +19,7 @@ from lizzy.terraform import (
 class TestGetOrganization:
     """Test get_organization function."""
 
-    @patch("lizzy.terraform.get_setting")
+    @patch("lizzy.helpers.terraform.get_setting")
     def test_get_organization_returns_org_name(self, mock_get_setting):
         """Test that get_organization returns the organization name."""
         mock_get_setting.return_value = "test-organization"
@@ -33,7 +33,7 @@ class TestGetOrganization:
 class TestGetHeaders:
     """Test get_headers function."""
 
-    @patch("lizzy.terraform.get_setting")
+    @patch("lizzy.helpers.terraform.get_setting")
     def test_get_headers_returns_correct_format(self, mock_get_setting):
         """Test that get_headers returns properly formatted headers."""
         mock_get_setting.return_value = "test_token_123"
@@ -50,8 +50,8 @@ class TestGetHeaders:
 class TestGetRequest:
     """Test get_request function."""
 
-    @patch("lizzy.terraform.get_headers")
-    @patch("lizzy.terraform.requests.get")
+    @patch("lizzy.helpers.terraform.get_headers")
+    @patch("lizzy.helpers.terraform.requests.get")
     def test_get_request_makes_request_with_headers(self, mock_get, mock_get_headers):
         """Test that get_request makes a GET request with proper headers."""
         mock_get_headers.return_value = {"Authorization": "Bearer token"}
@@ -67,8 +67,8 @@ class TestGetRequest:
         )
         mock_response.raise_for_status.assert_called_once()
 
-    @patch("lizzy.terraform.get_headers")
-    @patch("lizzy.terraform.requests.get")
+    @patch("lizzy.helpers.terraform.get_headers")
+    @patch("lizzy.helpers.terraform.requests.get")
     def test_get_request_raises_on_error(self, mock_get, mock_get_headers):
         """Test that get_request raises exception on HTTP error."""
         mock_get_headers.return_value = {"Authorization": "Bearer token"}
@@ -83,8 +83,8 @@ class TestGetRequest:
 class TestPostRequest:
     """Test post_request function."""
 
-    @patch("lizzy.terraform.get_headers")
-    @patch("lizzy.terraform.requests.post")
+    @patch("lizzy.helpers.terraform.get_headers")
+    @patch("lizzy.helpers.terraform.requests.post")
     def test_post_request_makes_request_with_payload(self, mock_post, mock_get_headers):
         """Test that post_request makes a POST request with payload and headers."""
         mock_get_headers.return_value = {"Authorization": "Bearer token"}
@@ -106,8 +106,8 @@ class TestPostRequest:
 class TestGetWorkspaces:
     """Test get_workspaces function."""
 
-    @patch("lizzy.terraform.get_organization")
-    @patch("lizzy.terraform.get_request")
+    @patch("lizzy.helpers.terraform.get_organization")
+    @patch("lizzy.helpers.terraform.get_request")
     @patch("builtins.print")
     @patch("click.echo")
     def test_get_workspaces_returns_all_workspaces(
@@ -139,8 +139,8 @@ class TestGetWorkspaces:
         assert result[1]["id"] == "ws-2"
         assert mock_get_request.call_count == 2
 
-    @patch("lizzy.terraform.get_organization")
-    @patch("lizzy.terraform.get_request")
+    @patch("lizzy.helpers.terraform.get_organization")
+    @patch("lizzy.helpers.terraform.get_request")
     @patch("builtins.print")
     def test_get_workspaces_handles_single_page(
         self, mock_print, mock_get_request, mock_get_org
@@ -166,7 +166,7 @@ class TestGetWorkspaces:
 class TestGetNotifications:
     """Test get_notifications function."""
 
-    @patch("lizzy.terraform.get_request")
+    @patch("lizzy.helpers.terraform.get_request")
     def test_get_notifications_returns_notifications_list(self, mock_get_request):
         """Test that get_notifications returns the list of notifications."""
         mock_response = MagicMock()
@@ -190,7 +190,7 @@ class TestGetNotifications:
 class TestCreateSlackNotification:
     """Test create_slack_notification function."""
 
-    @patch("lizzy.terraform.post_request")
+    @patch("lizzy.helpers.terraform.post_request")
     @patch("click.echo")
     def test_create_slack_notification_returns_true_on_success(
         self, mock_echo, mock_post_request
@@ -214,7 +214,7 @@ class TestCreateSlackNotification:
         assert payload["data"]["attributes"]["url"] == "https://hooks.slack.com/test"
         assert "run:created" in payload["data"]["attributes"]["triggers"]
 
-    @patch("lizzy.terraform.post_request")
+    @patch("lizzy.helpers.terraform.post_request")
     @patch("click.echo")
     def test_create_slack_notification_returns_false_on_failure(
         self, mock_echo, mock_post_request
@@ -232,10 +232,10 @@ class TestCreateSlackNotification:
 class TestSetSlackWebhook:
     """Test set_slack_webhook function."""
 
-    @patch("lizzy.terraform.get_setting")
-    @patch("lizzy.terraform.get_workspaces")
-    @patch("lizzy.terraform.get_notifications")
-    @patch("lizzy.terraform.create_slack_notification")
+    @patch("lizzy.helpers.terraform.get_setting")
+    @patch("lizzy.helpers.terraform.get_workspaces")
+    @patch("lizzy.helpers.terraform.get_notifications")
+    @patch("lizzy.helpers.terraform.create_slack_notification")
     @patch("click.echo")
     def test_set_slack_webhook_adds_webhook_to_unconfigured_workspaces(
         self,
@@ -268,7 +268,7 @@ class TestSetSlackWebhook:
             "ws-1", "https://hooks.slack.com/test"
         )
 
-    @patch("lizzy.terraform.get_setting")
+    @patch("lizzy.helpers.terraform.get_setting")
     def test_set_slack_webhook_raises_error_when_webhook_missing(
         self, mock_get_setting
     ):
@@ -280,9 +280,9 @@ class TestSetSlackWebhook:
 
         assert "Slack webhook URL is not set" in str(exc_info.value)
 
-    @patch("lizzy.terraform.get_setting")
-    @patch("lizzy.terraform.get_workspaces")
-    @patch("lizzy.terraform.get_notifications")
+    @patch("lizzy.helpers.terraform.get_setting")
+    @patch("lizzy.helpers.terraform.get_workspaces")
+    @patch("lizzy.helpers.terraform.get_notifications")
     @patch("click.echo")
     def test_set_slack_webhook_skips_already_configured_workspaces(
         self, mock_echo, mock_get_notifications, mock_get_workspaces, mock_get_setting
@@ -303,3 +303,93 @@ class TestSetSlackWebhook:
         # Verify message about already configured was echoed
         echo_calls = [str(call) for call in mock_echo.call_args_list]
         assert any("already configured" in call for call in echo_calls)
+
+
+class TestCancelRun:
+    """Test cancel_run function."""
+
+    @patch("lizzy.helpers.terraform.get_organization")
+    @patch("lizzy.helpers.terraform.get_headers")
+    @patch("lizzy.helpers.terraform.requests.post")
+    @patch("click.echo")
+    def test_cancel_run_discard_planned_success(self, mock_echo, mock_post, mock_get_headers, mock_get_org):
+        """Test canceling a planned run with successful discard."""
+        from lizzy.helpers.terraform import cancel_run
+        
+        mock_get_org.return_value = "test-org"
+        mock_get_headers.return_value = {"Authorization": "Bearer token"}
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_post.return_value = mock_response
+        
+        cancel_run("run-123", "planned", "test-workspace")
+        
+        mock_post.assert_called_once_with(
+            "https://app.terraform.io/api/v2/runs/run-123/actions/discard",
+            headers={"Authorization": "Bearer token"}
+        )
+        mock_echo.assert_any_call("✅ Successfully discarded run run-123 (Status: planned)")
+
+    @patch("lizzy.helpers.terraform.get_organization")
+    @patch("lizzy.helpers.terraform.get_headers")
+    @patch("lizzy.helpers.terraform.requests.post")
+    @patch("click.echo")
+    def test_cancel_run_discard_planned_initiated(self, mock_echo, mock_post, mock_get_headers, mock_get_org):
+        """Test canceling a planned run with discard initiated."""
+        from lizzy.helpers.terraform import cancel_run
+        
+        mock_get_org.return_value = "test-org"
+        mock_get_headers.return_value = {"Authorization": "Bearer token"}
+        mock_response = MagicMock()
+        mock_response.status_code = 202  # Discard initiated
+        mock_post.return_value = mock_response
+        
+        cancel_run("run-123", "planned", "test-workspace")
+        
+        mock_echo.assert_any_call("✅ Discard initiated for run run-123 (Status: planned)")
+
+    @patch("lizzy.helpers.terraform.get_organization")
+    @patch("lizzy.helpers.terraform.get_headers")
+    @patch("lizzy.helpers.terraform.requests.post")
+    @patch("click.echo")
+    def test_cancel_run_discard_failed_attempt_cancel(self, mock_echo, mock_post, mock_get_headers, mock_get_org):
+        """Test canceling a planned run when discard fails."""
+        from lizzy.helpers.terraform import cancel_run
+        
+        mock_get_org.return_value = "test-org"
+        mock_get_headers.return_value = {"Authorization": "Bearer token"}
+        
+        # Mock two calls: first fails (discard), second succeeds (cancel)
+        mock_responses = [MagicMock(), MagicMock()]
+        mock_responses[0].status_code = 400  # Discard fails
+        mock_responses[1].status_code = 200  # Cancel succeeds
+        mock_post.side_effect = mock_responses
+        
+        cancel_run("run-123", "planned", "test-workspace")
+        
+        assert mock_post.call_count == 2
+        mock_echo.assert_any_call("⚠️  Failed to discard run run-123: 400. Attempting to cancel...")
+        mock_echo.assert_any_call("✅ Successfully cancelled run run-123 (Status: planned)")
+
+    @patch("lizzy.helpers.terraform.get_organization")
+    @patch("lizzy.helpers.terraform.get_headers")
+    @patch("lizzy.helpers.terraform.requests.post")
+    @patch("click.echo")
+    def test_cancel_run_non_planned_status(self, mock_echo, mock_post, mock_get_headers, mock_get_org):
+        """Test canceling a run with non-planned status."""
+        from lizzy.helpers.terraform import cancel_run
+        
+        mock_get_org.return_value = "test-org"
+        mock_get_headers.return_value = {"Authorization": "Bearer token"}
+        mock_response = MagicMock()
+        mock_response.status_code = 200
+        mock_post.return_value = mock_response
+        
+        cancel_run("run-123", "pending", "test-workspace")
+        
+        # Should skip discard and go directly to cancel
+        mock_post.assert_called_once_with(
+            "https://app.terraform.io/api/v2/runs/run-123/actions/cancel",
+            headers={"Authorization": "Bearer token"}
+        )
+        mock_echo.assert_any_call("✅ Successfully cancelled run run-123 (Status: pending)")

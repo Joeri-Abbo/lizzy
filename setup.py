@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="lizzy-cli",
-    version="0.0.3",
+    version="0.1.0",
     packages=find_packages(),
     install_requires=[
         "click",
@@ -10,7 +10,11 @@ setup(
         "gimme-aws-creds",
         "boto3",
         "python-gitlab",
-        "PyChef",
+        "PyChef>=0.3.0",
+        "cryptography>=41.0.0",
+        "cffi>=1.16.0",
+        "rsa>=4.9",
+        "distro>=1.8.0",
         "setuptools"
     ],
     entry_points={
@@ -30,5 +34,5 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.6",
+    python_requires=">=3.13",
 )

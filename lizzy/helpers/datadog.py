@@ -4,8 +4,8 @@ import re
 import click
 import requests
 
-from lizzy.config import get_setting
-from lizzy.gitlab import setup_gitlab
+from lizzy.helpers.config import get_setting
+from lizzy.helpers.gitlab import setup_gitlab
 
 
 def get_auth_token(registry: str, repository: str) -> str:

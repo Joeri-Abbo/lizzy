@@ -1,15 +1,39 @@
-from lizzy.config import get_setting
-from lizzy.github import get_tags_of_repo
+from lizzy.helpers.config import get_setting
+from lizzy.helpers.github import get_tags_of_repo
 # --- Compatibility Fixes (place before importing chef) ---
 import collections
 import collections.abc
+import sys
+import platform
 
+# Fix for Python 3.13+ compatibility
 if not hasattr(collections, "Mapping"):
     collections.Mapping = collections.abc.Mapping
 if not hasattr(collections, "MutableMapping"):
     collections.MutableMapping = collections.abc.MutableMapping
 if not hasattr(collections, "Sequence"):
     collections.Sequence = collections.abc.Sequence
+
+# Fix for platform.linux_distribution() removal in Python 3.8+
+if not hasattr(platform, "linux_distribution"):
+    def linux_distribution(supported_dists=None):
+        """Monkey patch for removed platform.linux_distribution()."""
+        try:
+            import distro
+            return (distro.name(), distro.version(), distro.codename())
+        except ImportError:
+            # Fallback if distro is not available
+            return ("Unknown", "Unknown", "Unknown")
+    
+    platform.linux_distribution = linux_distribution
+
+# Additional Python 3.13+ compatibility fixes
+if sys.version_info >= (3, 8):
+    # Add any additional compatibility patches for newer Python versions
+    import warnings
+    warnings.filterwarnings("ignore", category=DeprecationWarning, module="chef")
+    warnings.filterwarnings("ignore", category=DeprecationWarning, module="rsa")
+    warnings.filterwarnings("ignore", category=UserWarning, module="chef")
 # --- End Compatibility Fixes ---
 
 from chef import ChefAPI, Environment

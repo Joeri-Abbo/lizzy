@@ -1,9 +1,9 @@
-"""Tests for lizzy.config module."""
+"""Tests for lizzy.helpers.config module."""
 
 from pathlib import Path
 from unittest.mock import MagicMock, mock_open, patch
 
-from lizzy.config import (
+from lizzy.helpers.config import (
     config_dir,
     config_path,
     edit_config,
@@ -39,7 +39,7 @@ class TestConfigPaths:
 class TestGetConfig:
     """Test get_config function."""
 
-    @patch("lizzy.config.config_path")
+    @patch("lizzy.helpers.config.config_path")
     @patch("builtins.open", new_callable=mock_open, read_data='{"test": "value"}')
     def test_get_config_loads_existing_config(self, mock_file, mock_config_path):
         """Test that get_config loads an existing config file."""
@@ -52,8 +52,8 @@ class TestGetConfig:
         assert result == {"test": "value"}
         mock_file.assert_called_once()
 
-    @patch("lizzy.config.config_path")
-    @patch("lizzy.config.example_config_path")
+    @patch("lizzy.helpers.config.config_path")
+    @patch("lizzy.helpers.config.example_config_path")
     @patch("builtins.open", new_callable=mock_open, read_data='{"example": "config"}')
     def test_get_config_loads_example_when_config_missing(
         self, mock_file, mock_example_path, mock_config_path
@@ -72,9 +72,9 @@ class TestGetConfig:
 class TestEditConfig:
     """Test edit_config function."""
 
-    @patch("lizzy.config.config_path")
-    @patch("lizzy.config.config_dir")
-    @patch("lizzy.config.example_config_path")
+    @patch("lizzy.helpers.config.config_path")
+    @patch("lizzy.helpers.config.config_dir")
+    @patch("lizzy.helpers.config.example_config_path")
     @patch("subprocess.run")
     @patch("builtins.open", new_callable=mock_open, read_data='{"example": "config"}')
     @patch("click.echo")
@@ -104,7 +104,7 @@ class TestEditConfig:
         mock_subprocess.assert_called_once()
         assert "vim" in str(mock_subprocess.call_args)
 
-    @patch("lizzy.config.config_path")
+    @patch("lizzy.helpers.config.config_path")
     @patch("subprocess.run")
     def test_edit_config_opens_existing_config(
         self, mock_subprocess, mock_config_path_func
@@ -119,7 +119,7 @@ class TestEditConfig:
         mock_subprocess.assert_called_once()
         assert "vim" in str(mock_subprocess.call_args)
 
-    @patch("lizzy.config.config_path")
+    @patch("lizzy.helpers.config.config_path")
     @patch("subprocess.run", side_effect=FileNotFoundError)
     @patch("click.echo")
     def test_edit_config_handles_missing_vim(
@@ -141,7 +141,7 @@ class TestEditConfig:
 class TestGetSetting:
     """Test get_setting function."""
 
-    @patch("lizzy.config.get_config")
+    @patch("lizzy.helpers.config.get_config")
     def test_get_setting_returns_nested_value(self, mock_get_config):
         """Test that get_setting retrieves nested configuration values."""
         mock_get_config.return_value = {
@@ -155,7 +155,7 @@ class TestGetSetting:
         result = get_setting("aws.accounts")
         assert result == [{"name": "dev", "id": "123"}]
 
-    @patch("lizzy.config.get_config")
+    @patch("lizzy.helpers.config.get_config")
     def test_get_setting_returns_none_for_missing_key(self, mock_get_config):
         """Test that get_setting returns None for missing keys."""
         mock_get_config.return_value = {"gitlab": {"api_token": "test_token"}}
@@ -163,7 +163,7 @@ class TestGetSetting:
         result = get_setting("nonexistent.key")
         assert result is None
 
-    @patch("lizzy.config.get_config")
+    @patch("lizzy.helpers.config.get_config")
     def test_get_setting_returns_none_for_empty_setting(self, mock_get_config):
         """Test that get_setting returns None for empty setting string."""
         mock_get_config.return_value = {"test": "value"}
@@ -174,7 +174,7 @@ class TestGetSetting:
         result = get_setting(None)
         assert result is None
 
-    @patch("lizzy.config.get_config")
+    @patch("lizzy.helpers.config.get_config")
     def test_get_setting_handles_partial_path(self, mock_get_config):
         """Test that get_setting handles partial paths correctly."""
         mock_get_config.return_value = {
