@@ -28,6 +28,11 @@ class GitlabCommands(BaseCommand):
             """Merge all approved merge requests from my user."""
             GitlabCommands._merge_approved()
 
+        @gitlab.command(name="merge-approved-yolo")
+        def merge_approved_yolo():
+            """Merge all approved merge requests from my user."""
+            GitlabCommands._merge_approved_yolo()
+
         @gitlab.command(name="remove-merged-branches")
         def remove_merged_branches():
             """Remove all merged branches in GitLab."""
@@ -84,6 +89,14 @@ class GitlabCommands(BaseCommand):
         from lizzy.helpers.gitlab import fetch_approved_merge_requests
         fetch_approved_merge_requests()
         click.echo("Merged approved pull requests from GitLab.")
+    
+    @staticmethod
+    def _merge_approved_yolo():
+        """Merge all approved merge requests from my user."""
+        from lizzy.helpers.gitlab import fetch_approved_merge_requests
+        fetch_approved_merge_requests(yolo=True)
+        click.echo("Merged approved pull requests from GitLab.")
+        
 
     @staticmethod
     def _remove_merged_branches():
