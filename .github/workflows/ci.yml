@@ -69,6 +69,10 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libffi-dev libssl-dev
+          
+      # Note: PyChef compatibility fix for Python 3.13+
+      # The PyChef library uses deprecated platform.linux_distribution() 
+      # We install distro package and monkey patch this in our code
 
       - name: Install dependencies
         run: |
