@@ -38,7 +38,7 @@ exclude_lines = [
 [tool.ruff]
 # Set the maximum line length to 88 (black's default)
 line-length = 88
-target-version = "py39"
+target-version = "py313"
 
 # Exclude common directories
 exclude = [
@@ -98,7 +98,7 @@ skip-magic-trailing-comma = false
 line-ending = "auto"
 
 [tool.mypy]
-python_version = "3.9"
+python_version = "3.13"
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = false
