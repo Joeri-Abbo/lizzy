@@ -84,6 +84,8 @@ jobs:
           pip install "rsa>=4.9"
           pip install "six>=1.16.0"
           pip install "distro>=1.8.0"
+          # setuptools<71 required for pkg_resources which PyChef depends on
+          pip install "setuptools<71"
           # Install PyChef with retries in case of issues
           for i in {1..3}; do
             if pip install PyChef; then
