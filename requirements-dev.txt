@@ -13,6 +13,6 @@ boto3
 python-gitlab
 PyChef>=0.3.0
 cryptography>=41.0.0
-cffi>=1.16.0
+cffi>=2.0.0
 rsa>=4.9
 distro>=1.8.0
